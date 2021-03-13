@@ -4,6 +4,7 @@ import static java.util.Objects.requireNonNull;
 
 import seedu.address.commons.core.Messages;
 import seedu.address.model.Model;
+import seedu.address.model.customer.NameContainsKeywordsComparator;
 import seedu.address.model.customer.NameContainsKeywordsPredicate;
 
 /**
@@ -20,15 +21,23 @@ public class FindCommand extends Command {
             + "Example: " + COMMAND_WORD + " alice bob charlie";
 
     private final NameContainsKeywordsPredicate predicate;
+    private final NameContainsKeywordsComparator comparator;
 
-    public FindCommand(NameContainsKeywordsPredicate predicate) {
+    /**
+     * Creates a new find command
+     * @param predicate predicate of find command
+     * @param comparator comparator to sort display list
+     */
+    public FindCommand(NameContainsKeywordsPredicate predicate, NameContainsKeywordsComparator comparator) {
         this.predicate = predicate;
+        this.comparator = comparator;
     }
 
     @Override
     public CommandResult execute(Model model) {
         requireNonNull(model);
         model.updateFilteredCustomerList(predicate);
+        model.updateSortedCustomerList(comparator);
         return new CommandResult(
                 String.format(Messages.MESSAGE_CUSTOMERS_LISTED_OVERVIEW, model.getFilteredCustomerList().size()));
     }
@@ -39,4 +48,5 @@ public class FindCommand extends Command {
                 || (other instanceof FindCommand // instanceof handles nulls
                 && predicate.equals(((FindCommand) other).predicate)); // state check
     }
+
 }
